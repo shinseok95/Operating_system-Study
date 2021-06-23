@@ -135,6 +135,41 @@
 
 ## Process Synchronization
 
+- Race Condition (경쟁상태)
+  - 여러 프로세스들이 동시에 공유데이터에 접근하는 상태
+  - 해결 조건
+    - ① Mutual Exclusion (상호 배제) : 어떤 프로세스가 사용 중이면, 다른 프로세스는 들어가면 안됨
+    - ② Progress (진행) : Critical Section(임계 구역)에 아무도 없을 때, 들어가고싶은 프로세스는 들어갈 수 있어야함
+    - ③ Bounded waiting (유한 대기)
+
+- Semaphore (세마포어)
+  - 공유 자원에 대한 접근을 제한하는 방법
+  - 종류
+    - ① Counting Semaphore : Critical Section에 들어갈 수 있는 스레드가 여러개인 세마포어 (즉, 자원이 여러개)
+    - ② Binary Semaphore (Mutex) : Lock & Unlock만 가능한 세마포어
+  - 함수
+    - P(s) : 자원을 획득하는 과정 (Lock)
+    - V(s) : 자원을 반납하는 과정 (Unlock)
+ 
+- Monitor (모니터)
+  - 하나의 프로세스 내에서 다른 스레드간의 동기화
+  - 한 순간에 오직 한 프로세스만이 모니터 내에 존재 가능
+  - 장점 
+    - 개발자가 세마포어를 통해 복잡한 개발 필요 X => 라이브러리, 프레임워크에서 제공 (ex : Java의 synchronized)
+
+- Deadlock (데드락)
+  - 일련의 프로세스들이 서로가 가진 자원을 기다리며 Block된 상태
+  - 발생 조건
+    - ① Mutual exclusion (상호 배제) : 한 프로세스만 사용
+    - ② No preemptive (비선점) : 뺏기지 않음
+    - ③ Hold and Wait (보유 & 대기) : 보유 자원을 내놓지 않음
+    - ④ Circular wait (환형 대기) : 프로세스간 사이클 형성
+  - 해결 방법
+    - ① Deadlock Prevention : 발생 조건 4가지 중 어느 하나가 만족되지 않도록 하는 것
+    - ② Deadlock Avoidance : 부가적인 정보를 이용해 Deadlock 가능성이 없을 때만 자원 할당
+    - ③ Deadlock Detection and Recovery : 데드락이 발생하면 비용을 최소할 프로세스에게서 자원을 빼앗음
+    - ④ Deadlock Ignorance : 시스템이 책임지지 않고, 사용자가 알아서 하도록 함 (대부분의 OS가 채택)
+
 ## Memory Management
 
 ## Virtual Memory
