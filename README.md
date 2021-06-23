@@ -94,6 +94,45 @@
 > 
 ## CPU Scheduling
 
+- Scheduler
+  - CPU 스케줄을 관리
+  - 대기 상태의 프로세스 중 다음에 실행될 프로세스를 고름
+  - 방법
+    - Nonpreemptive (비선점형) : 실행중인 프로세스가 자진 반납할 때까지 놔둠 (ex : I/O interrupt, terminate 등) -> 물론 time out시에는 빼앗음
+    - preemptive (선점형) : 우선 순위인 프로세스가 들어오면 실행중인 프로세스를 강제로 반납시킴
+- Dispatcher
+  - 스케줄러에 의해 선택된 프로세스에 CPU 제어권을 넘김
+
+- 성능 척도
+  - CPU utilizaion (이용률) : 전체 시간 중 CPU가 작동한 비율
+  - Throuhgput (처리량) : 단위 시간 중 처리한 양
+  - Turnaround time (반환시간) : CPU 쓴 시간 + CPU 기다린 시간
+  - Wating time : 기다린 전체 시간
+  - Response time : 프로세스가 시작하고, 최초로 CPU를 사용하기까지의 시간
+
+- 스케줄링 알고리즘
+  - ① FCFS (First Come First Served)
+    - 먼저 온 프로세스 먼저 실행
+  - ② SJF (Shortest Job First)
+    - CPU 이용시간이 짧은 프로세스 먼저 실행
+    - 문제점 : Starvation (기아현상)
+  - ③ SRTF (Shortest Remaing Time First)
+    - Preemptive 방식의 SJF 알고리즘
+    - 중간에 더 짧은 프로세스가 들어오면 Context Switching (현재 남아 있는 시간 기준)
+  - ④ Priority Scheduling
+    - 우선 순위가 높은 프로세스 먼저 실행
+    - 문제점 : Starvation (기아현상)
+    - 해결책 : Aging (오래 기다린 프로세스의 우선순위를 높여줌)
+  - ⑤ Round Robin
+    - 각 프로세스는 할당 시간 (Time Quantum)을 사용하면, Queue의 맨 마지막으로 들어가서 대기
+    - 장점 : Response Time이 짧아짐
+    - 단점 : Average turnaround time이 길어짐
+  - ⑥ Multilevel Queue
+    - Ready Queue를 여러 개로 분할 (각 Queue마다 우선순위가 존재)
+  - ⑦ Multilevel Feedback Queue
+    - 프로세스가 다른 Queue로 이동 가능 ( Aging을 통해 구현)
+
+
 ## Process Synchronization
 
 ## Memory Management
