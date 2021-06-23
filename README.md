@@ -91,7 +91,7 @@
 
 ![dd](https://user-images.githubusercontent.com/48644958/123044386-88984300-d434-11eb-9b8e-d6e35e5795b2.jpg)
 > [사진 출처](https://m.blog.naver.com/three_letter/220333796848)
-> 
+
 ## CPU Scheduling
 
 - Scheduler
@@ -172,6 +172,131 @@
 
 ## Memory Management
 
+- 메모리 주소
+  - Logical Address (Virtual Address) : 프로세스마다 독립적으로 가지는 주소 공간
+  - Physical Address : 메모리에 실제로 올라가는 위치
+
+- MMU (Memory Management Unit)
+  - Logical address를 physical address로 매핑해주는 하드웨어
+
+- Memory Allocation (메모리 할당)
+  - ① Contiguous Allocation (연속 할당)
+    - 각각의 프로세스를 연속적인 공간에 할당
+    - 할당 방법 : First-Fit / Best-Fit / Worst-Fit
+    - 단점 : External Fragmentation이 발생
+  - ② Noncontiguous Allocation (불연속 할당)
+    - 하나의 프로세스가 메모리의 여러 영역에 분산 할당
+    - 할당 방법 : Paging / Segmentation / Paged Segmentation
+
+- Paging
+  - 프로세스의 Virtual memory를 동일한 사이즈(4KB)의 Page로 나눠서 관리
+  - Virtual memory(page) == Physical memory(frame) 같은 크기
+  - Page Table을 통해 주소 변환
+    - 메모리에 위치한 Page Table의 접근 속도가 느리다는 한계
+    - TLB (Translation Look-side Buffer) 캐시를 사용해서 극복
+  - Shared Page
+    - 여로 프로세스에서 사용되는 Code를 메모리에 한번만 올림
+    - 조건 : Read only / 각 프로세스에서 Logical address가 같아야함
+
+- Segmentation
+  - 의미 단위로 구분 ( ex: stack, code, data)
+  - 장점
+    - 보안, 공유 ↑
+  - 단점
+    - 메모리 할당 문제 (각 segment의 크기가 모두 다름)
+
+- Paged Segmentation
+  - 외부적으로는 Segmentation 단위로, 내부적으로는 Paged 단위로 구성 (메모리 할당 문제 해결)
+
 ## Virtual Memory
 
+- Page replacement
+  - 사용될 Frame과 사용되지 않을 Page를 교체
+  - Page Fault Rate를 낮게 하는 것이 중요
+
+- Replace Algorithm
+  - ① FIFO (First In First Out)
+    - 먼저 들어온 Page를 내쫓음
+  - ② LRU (Least Recently Used)
+    - 가장 오래전에 참조된 Page를 내쫓음
+    - 연결리스트로 구현 (O(1))
+    - 한계 : 하드웨어 한계로 인해 사용 불가 => swaping을 제외한 page replacement는 하드웨어에서 처리 (즉, 가장 오래전에 사용된 page가 뭔지 운영체제는 알 수 없음)
+  - ③ LFU (Least Frequently Used)
+    - 참조 횟수가 가장 적은 Page를 내쫓음
+    - Min Heap을 통해 구현(O(logN))
+  - ④ Clock 알고리즘 (NRU, Not Resently Used)
+    - 가장 오래전이 아닌, 비교적 오래전에 사용된 Page를 교체 (느슨한 LRU)
+    - 구현 방법 : Reference Bit를 확인하여 1이면 0으로 바꾸고 다음 Page를 확인 / 0이면 Page 교체 후, 1로 바꿈 (시계 모양으로 반복)
+
+- Page Allocation
+  - 프로세스당 일정 Page 개수를 할당
+
+- Thrashing
+  - 프로세스의 원활한 수행에 필요한 최소한의 Page 수를 할당받지 못한 경우 발생
+  - Page Fault Rate ↑ => CPU Utilizaion ↓
+  - 해결 방법 : 적당한 프로세스 수를 유지해야함
+![ff](https://user-images.githubusercontent.com/48644958/123050207-6950e400-d43b-11eb-8856-1ddb85cf0c32.png)
+> [사진 출처](https://m.blog.naver.com/three_letter/220333796848)
+
+- Locality
+  - 집중적으로 참조되는 Page들의 집합
+  - 프로세스는 특정 시간동안 일정 장소만을 집중적으로 참조
+
+- Working set
+  - Locality에 기반하여 한꺼번에 메모리에 올라와있는 Page들의 집합
+  - 프로세스의 Working set이 메모리에 한꺼번에 올리지 못하는 경우라면, 그냥 아예 안올림
+  - Ex : Working set 5개, 가용 메모리 3개 => 5개 모두 안올림
+
+- Page size
+  - Small
+    - 장점 : 메모리를 효율적으로 사용 가능
+    - 단점 : Disk Transfer 효율성 ↓
+  - Large
+    - 장점 : Dist Transfer 효율성 ↑
+
 ## File Systems
+
+- 관련 용어
+  - File
+    - 관련 정보를 이름을 통해 관리하는 것
+    - 비휘발성
+  - Metadata
+    - 파일을 저장하기 위한 각종 정보들
+  - Directory
+    - 파일의 메타데이터 중 일부를 보관하고 있는 일종의 특별한 파일
+
+- Allocation
+  - ① Contiguous Allocation
+    - 장점 : Fast I/O, Direct Access 가능
+    - 단점 : External Fragmentaion 발생, 파일 크기 변경이 어려움
+  - ② Linked Allocation
+    - 장점 : External Fragmentation 발생 X
+    - 단점 : No Random Access (순서대로 읽어야함), Reliability (중간 Sector가 손상되면, 이후 데이터들은 모두 유실)
+    - 변형 : FAT(File Allocation Table)
+  - ③ Indexed Allocation
+    - 장점 : External Fragmentaion 발생 X, Direct Access 가능
+    - 단점 : 공간 낭비 (아무리 작은 파일이라도 Index 데이터를 가지고 있어야함)
+
+![qqqqq](https://user-images.githubusercontent.com/48644958/123052175-7f5fa400-d43d-11eb-8460-adc852de1e75.jpg)
+![wwwww](https://user-images.githubusercontent.com/48644958/123052231-93a3a100-d43d-11eb-8acc-f37b97bd17b2.jpg)
+![eeeeee](https://user-images.githubusercontent.com/48644958/123052265-9acaaf00-d43d-11eb-9c67-8eadcbea47aa.jpg)
+> [사진 출처](https://www.geeksforgeeks.org/file-allocation-methods/)
+
+- Unix 파일 시스템 구조
+  - Inode에서 File의 metadata를 관리
+- FAT (File Allocation Table)
+  - File Allocation Table을 메모리에 두고 파일 위치를 관리
+- VFS (Virtual File System)
+  - 서로 다른 file system에 대해 동일한 system call api를 통해 접근할 수 있도록 해줌
+- NFS (Network File System)
+  - 분산 시스템엣 네트워크를 통해 파일이 공유될 수 있도록 해줌
+
+- Cache
+  - Page Cache
+    - 가상 메모리에서 사용
+    - 보통 4KB
+  - Buffer Cache
+    - 파일 시스템에서 사용
+    - 보통 512Byte
+  - Memory Mapped I/O
+    - 자신의 주소공간에 디스크를 직접 연결
